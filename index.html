@@ -1,429 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WordDuel - Battle for Word Supremacy</title>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
-<style>
-:root {
---bg-dark: #0a0e27;
---bg-card: #151b3d;
---accent-bronze: #cd7f32;
---accent-silver: #c0c0c0;
---accent-gold: #ffd700;
---accent-platinum: #e5e4e2;
---accent-historic: #ff6b6b;
---text-primary: #ffffff;
---text-secondary: #a8b2d1;
---health-bar: #4ecdc4;
---damage-red: #ff6b6b;
-}
-{
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-body {
-font-family: 'Lexend', sans-serif;
-background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f4d 100%);
-color: var(--text-primary);
-min-height: 100vh;
-overflow-x: hidden;
-}
-.app-container {
-max-width: 450px;
-margin: 0 auto;
-min-height: 100vh;
-position: relative;
-padding: 20px;
-}
-.title-screen {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-text-align: center;
-animation: fadeIn 1s ease-in;
-}
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
-.game-logo {
-font-family: 'Space Mono', monospace;
-font-size: 3.5rem;
-font-weight: 700;
-background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-margin-bottom: 1rem;
-text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-animation: glow 2s ease-in-out infinite alternate;
-}
-@keyframes glow {
-from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); }
-to { filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.5)); }
-}
-.tagline {
-font-size: 1.1rem;
-color: var(--text-secondary);
-margin-bottom: 0.5rem;
-letter-spacing: 0.05em;
-}
-.creator-credit {
-font-size: 0.9rem;
-color: var(--text-secondary);
-margin-bottom: 2rem;
-font-style: italic;
-}
-.btn {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-border: none;
-color: white;
-padding: 1rem 3rem;
-font-size: 1.1rem;
-font-weight: 600;
-border-radius: 50px;
-cursor: pointer;
-transition: all 0.3s ease;
-box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-font-family: 'Lexend', sans-serif;
-margin: 0.5rem;
-}
-.btn:hover {
-transform: translateY(-2px);
-box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-}
-.btn:active {
-transform: translateY(0);
-}
-.btn-secondary {
-background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-box-shadow: 0 10px 30px rgba(78, 205, 196, 0.4);
-}
-.btn-secondary:hover {
-box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6);
-}
-.game-screen {
-animation: slideIn 0.5s ease-out;
-}
-@keyframes slideIn {
-from { opacity: 0; transform: translateX(20px); }
-to { opacity: 1; transform: translateX(0); }
-}
-.game-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 1.5rem;
-padding: 1rem;
-background: rgba(21, 27, 61, 0.6);
-border-radius: 15px;
-backdrop-filter: blur(10px);
-}
-.trophy-count {
-display: flex;
-align-items: center;
-gap: 0.5rem;
-font-weight: 600;
-font-size: 1.1rem;
-}
-.trophy-icon {
-font-size: 1.5rem;
-}
-.round-indicator {
-font-weight: 800;
-font-size: 1.2rem;
-color: var(--accent-gold);
-}
-.players-area {
-display: flex;
-flex-direction: column;
-gap: 1rem;
-margin-bottom: 1.5rem;
-}
-.player-card {
-background: var(--bg-card);
-border-radius: 15px;
-padding: 1rem;
-border: 2px solid transparent;
-transition: all 0.3s ease;
-}
-.player-card.active {
-border-color: var(--accent-gold);
-box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
-.player-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 0.8rem;
-}
-.player-name {
-font-weight: 600;
-font-size: 1.1rem;
-}
-.health-container {
-flex: 1;
-margin: 0 1rem;
-}
-.health-bar {
-width: 100%;
-height: 20px;
-background: rgba(255, 255, 255, 0.1);
-border-radius: 10px;
-overflow: hidden;
-position: relative;
-}
-.health-fill {
-height: 100%;
-background: linear-gradient(90deg, var(--health-bar) 0%, #44a08d 100%);
-transition: width 0.5s ease;
-border-radius: 10px;
-}
-.health-text {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-font-size: 0.8rem;
-font-weight: 600;
-color: white;
-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-.booster-slot {
-display: inline-block;
-padding: 0.5rem 1rem;
-background: rgba(255, 215, 0, 0.1);
-border: 1px solid var(--accent-gold);
-border-radius: 8px;
-font-size: 0.9rem;
-margin-top: 0.5rem;
-cursor: pointer;
-}
-.letter-rack {
-background: rgba(10, 14, 39, 0.5);
-border-radius: 12px;
-padding: 1rem;
-display: flex;
-flex-wrap: wrap;
-gap: 0.5rem;
-justify-content: center;
-min-height: 80px;
-}
-.letter-tile {
-width: 45px;
-height: 45px;
-background: linear-gradient(135deg, #2d3561 0%, #1f2544 100%);
-border: 2px solid #4a5578;
-border-radius: 8px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 1.5rem;
-font-weight: 700;
-cursor: pointer;
-transition: all 0.2s ease;
-position: relative;
-}
-.letter-tile:hover {
-transform: translateY(-3px);
-border-color: var(--accent-gold);
-box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-}
-.letter-tile.selected {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-border-color: #667eea;
-transform: translateY(-5px);
-}
-.letter-value {
-position: absolute;
-bottom: 2px;
-right: 4px;
-font-size: 0.7rem;
-color: var(--text-secondary);
-}
-.word-input-area {
-margin: 1.5rem 0;
-text-align: center;
-}
-.current-word {
-font-size: 2rem;
-font-weight: 800;
-min-height: 60px;
-display: flex;
-align-items: center;
-justify-content: center;
-letter-spacing: 0.1em;
-color: var(--accent-gold);
-text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-}
-.word-actions {
-display: flex;
-gap: 1rem;
-justify-content: center;
-margin-top: 1rem;
-}
-.btn-small {
-padding: 0.7rem 1.5rem;
-font-size: 0.95rem;
-}
-.timer-display {
-text-align: center;
-margin: 1rem 0;
-}
-.timer-circle {
-font-size: 2.5rem;
-font-weight: 800;
-color: var(--accent-gold);
-animation: pulse 1s ease-in-out infinite;
-}
-.timer-circle.urgent {
-color: var(--damage-red);
-animation: urgentPulse 0.5s ease-in-out infinite;
-}
-@keyframes pulse {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.7; }
-}
-@keyframes urgentPulse {
-0%, 100% { transform: scale(1); }
-50% { transform: scale(1.1); }
-}
-.damage-popup {
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-font-size: 4rem;
-font-weight: 800;
-color: var(--damage-red);
-animation: damageAnim 1s ease-out forwards;
-pointer-events: none;
-z-index: 1000;
-text-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
-}
-@keyframes damageAnim {
-0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-100% { opacity: 0; transform: translate(-50%, -100%) scale(1); }
-}
-.booster-animation {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-background: rgba(0, 0, 0, 0.8);
-z-index: 999;
-animation: fadeIn 0.3s ease;
-}
-.burglar {
-font-size: 5rem;
-animation: burglarRun 2s ease-in-out;
-}
-@keyframes burglarRun {
-0% { transform: translateX(-200px) scaleX(-1); }
-40% { transform: translateX(0) scaleX(-1); }
-60% { transform: translateX(0) scaleX(-1) scale(1.2); }
-100% { transform: translateX(200px) scaleX(1); }
-}
-.tier-badge {
-display: inline-block;
-padding: 0.3rem 0.8rem;
-border-radius: 20px;
-font-size: 0.8rem;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-margin-left: 0.5rem;
-}
-.tier-bronze { background: var(--accent-bronze); color: #000; }
-.tier-silver { background: var(--accent-silver); color: #000; }
-.tier-gold { background: var(--accent-gold); color: #000; }
-.tier-platinum { background: var(--accent-platinum); color: #000; }
-.tier-historic { background: linear-gradient(135deg, #ff6b6b 0%, #ffd700 100%); color: #fff; }
-</style>
+  <meta charset="UTF-8" />
+  <title>WordDuel – Founder’s Cut</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #111827;
+      --accent-gold: #ffd700;
+      --damage-red: #ff6b6b;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --health-bar: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1f2937 0%, #020617 50%, #000 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #root {
+      width: 100%;
+      max-width: 480px;
+      padding: 1rem;
+    }
+
+    .game-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      padding: 1.5rem;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .title h1 {
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .players-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .player-card {
+      flex: 1;
+      background: linear-gradient(145deg, #020617 0%, #020617 40%, #111827 100%);
+      border-radius: 12px;
+      padding: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      position: relative;
+    }
+
+    .player-label {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .health-bar {
+      width: 100%;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .health-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--health-bar) 0%, #44a08d 100%);
+      transition: width 0.4s ease;
+      border-radius: 999px;
+    }
+
+    .health-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .current-word {
+      font-size: 2rem;
+      font-weight: 800;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .letter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .letter-tile {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, #2d3561 0%, #1f2544 100%);
+      border: 2px solid #4a5578;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      color: #e5e7eb;
+    }
+
+    .letter-tile.selected {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(250, 204, 21, 0.4);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .timer-circle {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .timer-circle.urgent {
+      color: var(--damage-red);
+      animation: urgentPulse 0.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes urgentPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .damage-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--damage-red);
+      animation: damageAnim 1s ease-out forwards;
+      pointer-events: none;
+      z-index: 1000;
+      text-shadow: 0 0 0.5rem rgba(255, 107, 107, 0.8);
+    }
+
+    @keyframes damageAnim {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -100%) scale(1); }
+    }
+  </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect } = React;
-const LETTER_VALUES = {
-'A': 1, 'E': 1, 'I': 1, 'O': 1, 'U': 1, 'L': 1, 'N': 1, 'S': 1, 'T': 1, 'R': 1,
-'D': 2, 'G': 2,
-'B': 3, 'C': 3, 'M': 3, 'P': 3,
-'F': 4, 'H': 4, 'V': 4, 'W': 4, 'Y': 4,
-'K': 5,
-'J': 8, 'X': 8,
-'Q': 10, 'Z': 10
-};
-const LETTER_DISTRIBUTION = 'AAAAAAAAAEEEEEEEEEEEEIIIIIIIIIOOOOOOOUUUULLLLNNNNSSSSTTTTRRRRDDGGBBCCMMPPFFFVVVWWYYKJXQZ';
-const VALID_WORDS = new Set(['CAT', 'DOG', 'WORD', 'DUEL', 'GAME', 'PLAY', 'WIN', 'LOSE', 'FIGHT', 'BATTLE', 'SWORD', 'SHIELD', 'MAGIC', 'POWER', 'QUEST', 'HERO', 'DRAGON', 'CASTLE', 'KNIGHT', 'THE', 'AND', 'FOR', 'ARE', 'BUT', 'NOT', 'YOU', 'ALL', 'CAN', 'HER', 'WAS', 'ONE', 'OUR', 'OUT', 'DAY', 'GET', 'HAS', 'HIM', 'HIS', 'HOW', 'MAN', 'NEW', 'NOW', 'OLD', 'SEE', 'TWO', 'WAY', 'WHO', 'BOY', 'DID', 'ITS', 'LET', 'PUT', 'SAY', 'SHE', 'TOO', 'USE']);
-function generateLetters() {
-const letters = [];
-for (let i = 0; i < 12; i++) {
-const randomLetter = LETTER_DISTRIBUTION[Math.floor(Math.random() * LETTER_DISTRIBUTION.length)];
-letters.push(randomLetter);
-}
-return letters;
-}
-function calculateWordDamage(word) {
-let damage = 0;
-for (let letter of word) {
-damage += LETTER_VALUES[letter] || 0;
-}
-if (word.length >= 5) damage += 10;
-if (word.length >= 7) damage += 20;
-return damage;
-}
-function getTierFromTrophies(trophies) {
-if (trophies >= 2500) return 'historic';
-if (trophies >= 1500) return 'platinum';
-if (trophies >= 800) return 'gold';
-if (trophies >= 300) return 'silver';
-return 'bronze';
-}
-function WordDuelApp() {
-const [screen, setScreen] = useState('title');
-const [trophies, setTrophies] = useState(0);
-const [playerTier, setPlayerTier] = useState('bronze');
-const [round, setRound] = useState(1);
-const [playerWins, setPlayerWins] = useState(0);
-const [opponentWins, setOpponentWins] = useState(0);
-const [playerHealth, setPlayerHealth] = useState(100);
-const [opponentHealth, setOpponentHealth] = useState(100);
-const [playerLetters, setPlayerLetters] = useState([]);
-const [opponentLetters, setOpponentLetters] = useState([]);
-const [selectedLetters, setSelectedLetters] = useState([]);
-const [currentWord, setCurrentWord] = useState('');
-const [timeRemaining, setTimeRemaining] = useState(60);
-const [gameActive, setGameActive] = useState(false);
-const [damagePopup, setDamagePopup] = useState(null);
-const [showBoosterAnim, setShowBoosterAnim] = useState(null);
-useEffect(() => {
-const tier = getTierFromTrophies(trophies);
-setPlayerTier(tier);
-}, [trophies]);
-useEffect(() => {
-if (gameActive && timeRemaining > 0) {
-const timer = setTimeout(() => setTimeRemaining(timeRemaining - 1), 1000);
-return () => clearTimeout(timer);
-} else if (timeRemaining === 0 && gameActive) {
-endRound();
-}
-}, [timeRemaining, gameActive]);
-const startMatch = () => {
-setScreen('game');
-setR
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const LETTER_VALUES = {
+      'A': 1, 'E': 1, 'I': 1, 'O': 1, 'U': 1,
+      'L': 1, 'N': 1, 'S': 1, 'T': 1, 'R': 1,
+      'D': 2, 'G': 2,
+      'B': 3, 'C': 3, 'M': 3, 'P': 3,
+      'F': 4, 'H': 4, 'V': 4, 'W': 4, 'Y': 4,
+      'K': 5,
+      'J': 8, 'X': 8,
+      'Q': 10, 'Z': 10
+    };
+
+    const LETTER_DISTRIBUTION =
+      "AAAAAAAAAEEEEEEEEEEEIIIIIIIIIOOOOOOOOUUUULLLLNNNNSSSSTTTRRRRRDDGGBBCCMMPPFFVVVVYYKKJXQZ";
+
+    const VALID_WORDS = new Set([
+      'CAT','DOG','WORD','DUEL','GAME','PLAY',
+      'WIN','LOSE','FIGHT','BATTLE',
+      'SWORD','SHIELD','MAGIC','POWER',
+      'QUEST','HERO','DRAGON','CASTLE',
+      'KNIGHT','THE','AND','FOR','ARE',
+      'BUT','NOT','YOU','ALL','CAN','HER',
+      'WAS','ONE','OUR','OUT','DAY','GET',
+      'HAS','HIM','HI','JW','MAN','NEW',
+      'NOW','OLD','SEE','TWO','WAY',
+      'WHO','BOY','DID','ITS','LET','PUT',
+      'SAY','SHE','TOO','USE'
+    ]);
+
+    function generateLetters() {
+      const letters = [];
+      for (let i = 0; i < 12; i++) {
+        const randomLetter =
+          LETTER_DISTRIBUTION[Math.floor(Math.random() * LETTER_DISTRIBUTION.length)];
+        letters.push(randomLetter);
+      }
+      return letters;
+    }
+
+    function calculateWordDamage(word) {
+      let damage = 0;
+      for (let letter of word) {
+        damage += LETTER_VALUES[letter] || 0;
+      }
+      if (word.length >= 5) damage += 10;
+      if (word.length >= 7) damage += 20;
+      return damage;
+    }
+
+    function getTierFromTrophies(trophies) {
+      if (trophies >= 2500) return 'historic';
+      if (trophies >= 1500) return 'platinum';
+      if (trophies >= 800) return 'gold';
+      if (trophies >= 300) return 'silver';
+      return 'bronze';
+    }
+
+    function pickBestWordFromRack(letters) {
+      const letterCounts = {};
+      for (const l of letters) {
+        letterCounts[l] = (letterCounts[l] || 0) + 1;
+      }
+
+      let bestWord = "";
+      let bestDamage = 0;
+
+      for (const word of VALID_WORDS) {
+        if (word.length > letters.length) continue;
+        const tempCounts = { ...letterCounts };
+        let ok = true;
+        for (const ch of word) {
+          if (!tempCounts[ch]) { ok = false; break; }
+          tempCounts[ch]--;
+        }
+        if (!ok) continue;
+        const dmg = calculateWordDamage(word);
+        if (dmg > bestDamage) {
+          bestDamage = dmg;
+          bestWord = word;
+        }
+      }
+
+      return bestWord || "";
+    }
+
+    function WordDuelApp() {
+      const [screen, setScreen] = useState('title');
+      const [trophies, setTrophies] = useState(0);
+      const [playerTier, setPlayerTier] = useState('bronze');
+      const [round, setRound] = useState(1);
+      const [playerWins, setPlayerWins] = useState(0);
+      const [opponentWins, setOpponentWins] = useState(0);
+      const [playerHealth, setPlayerHealth] = useState(100);
+      const [opponentHealth, setOpponentHealth] = useState(100);
+      const [playerLetters, setPlayerLetters] = useState([]);
+      const [opponentLetters, setOpponentLetters] = useState([]);
+      const [selectedLetters, setSelectedLetters] = useState([]);
+      const [currentWord, setCurrentWord] = useState("");
+      const [timeRemaining, setTimeRemaining] = useState(60);
+      const [gameActive, setGameActive] = useState(false);
+      const [damagePopup, setDamagePopup] = useState(null);
+
+      useEffect(() => {
+        const tier = getTierFromTrophies(trophies);
+        setPlayerTier(tier);
+      }, [trophies]);
+
+      useEffect(() => {
+        if (gameActive && timeRemaining > 0) {
+          const timer = setTimeout(() => {
+            setTimeRemaining((t) => t - 1);
+          }, 1000);
+          return () => clearTimeout(timer);
+        } else if (timeRemaining === 0 && gameActive) {
+          endRound();
+        }
+      }, [timeRemaining, gameActive]);
+
+      function resetRoundState() {
+        setPlayerLetters(generateLetters());
+        setOpponentLetters(generateLetters());
+        setSelectedLetters([]);
+        setCurrentWord("");
+        setTimeRemaining(60);
+        setGameActive(true);
+      }
+
+      function startMatch() {
+        setScreen('game');
+        setRound(1);
+        setPlayerWins(0);
+        setOpponentWins(0);
+        setPlayerHealth(100);
+        setOpponentHealth(100);
+        resetRoundState();
+      }
+
+      function handleTileClick(index) {
+        if (!gameActive) return;
+        const letter = playerLetters[index];
+        if (!letter) return;
+
+        const newLetters = [...playerLetters];
+        newLetters.splice(index, 1);
+        setPlayerLetters(newLetters);
+
+        const newSelected = [...selectedLetters, letter];
+        setSelectedLetters(newSelected);
+        setCurrentWord(newSelected.join(""));
+      }
+
+      function clearWord() {
+        setPlayerLetters([...playerLetters, ...selectedLetters]);
+        setSelectedLetters([]);
+        setCurrentWord("");
+      }
+
+      function submitWord() {
+        if (!gameActive) return;
+        const word = currentWord.toUpperCase();
+        if (!word || !VALID_WORDS.has(word)) {
+          return;
+        }
+
+        const playerDamage = calculateWordDamage(word);
+        const aiWord = pickBestWordFromRack(opponentLetters);
+        const opponentDamage = aiWord ? calculateWordDamage(aiWord) : 0;
+
+        setDamagePopup(`-${playerDamage} / -${opponentDamage}`);
+        setTimeout(() => setDamagePopup(null), 1000);
+
+        setOpponentHealth((h) => Math.max(0, h - playerDamage));
+        setPlayerHealth((h) => Math.max(0, h - opponentDamage));
+
+        setGameActive(false);
+        setTimeout(() => {
+          endRound();
+        }, 800);
+      }
+
+      function endRound() {
+        let newPlayerWins = playerWins;
+        let newOpponentWins = opponentWins;
+
+        if (playerHealth > opponentHealth) {
+          newPlayerWins += 1;
+          setPlayerWins(newPlayerWins);
+          setTrophies((t) => t + 50);
+        } else if (opponentHealth > playerHealth) {
+          newOpponentWins += 1;
+          setOpponentWins(newOpponentWins);
+          setTrophies((t) => Math.max(0, t - 30));
+        }
+
+        if (newPlayerWins >= 2 || newOpponentWins >= 2) {
+          setGameActive(false);
+          setScreen('results');
+          return;
+        }
+
+        setRound((r) => r + 1);
+        setPlayerHealth(100);
+        setOpponentHealth(100);
+        resetRoundState();
+      }
+
+      function backToTitle() {
+        setScreen('title');
+      }
+
+      const timerUrgent = timeRemaining <= 10;
+
+      if (screen === 'title') {
+        return (
+          <div className="game-card title-screen">
+            <h1>WORDDUEL</h1>
+            <p>Build the strongest word from your 12 letters. Out‑damage your opponent. Win the duel.</p>
+            <div style={{ marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              Trophies: {trophies} · Tier: {playerTier.toUpperCase()}
+            </div>
+            <button className="btn" onClick={startMatch}>Start Match</button>
+          </div>
+        );
+      }
+
+      if (screen === 'results') {
+        const result =
+          playerWins > opponentWins ? "You won the match!" :
+          opponentWins > playerWins ? "You lost the match." :
+          "Match ended.";
+
+        return (
+          <div className="game-card">
+            <div className="title">
+              <h1>RESULTS</h1>
+              <div className="subtitle">
+                Trophies: {trophies} · Tier: {playerTier.toUpperCase()}
+              </div>
+            </div>
+            <div className="results">
+              <p>{result}</p>
+              <p style={{ marginTop: '0.5rem' }}>
+                Rounds: You {playerWins} – {opponentWins} Opponent
+              </p>
+            </div>
+            <div className="word-actions" style={{ marginTop: '1.5rem' }}>
+              <button className="btn-secondary btn" onClick={backToTitle}>Back to Title</button>
+              <button className="btn" onClick={startMatch}>Play Again</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="game-card">
+          <div className="title">
+            <h1>WORDDUEL</h1>
+            <div className="subtitle">
+              Round {round} · You {playerWins} – {opponentWins} Opponent · Trophies: {trophies}
+            </div>
+          </div>
+
+          <div className="players-row">
+            <div className="player-card">
+              <div className="player-label">You</div>
+              <div className="health-bar">
+                <div className="health-fill" style={{ width: playerHealth + '%' }} />
+                <div className="
